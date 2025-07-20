@@ -7,16 +7,14 @@ const checkLiveStatus = async () => {
   const url = `https://www.youtube.com/${config.channelHandle}/live`;
   const browser = await launchBrowser();
   const page = await browser.newPage();
+  const spinner = ora(
+    `Checking Stream Status From: ${config.channelHandle}`
+  ).start();
 
   try {
-    const spinner = ora(
-      `Checking Stream Status From: ${config.channelHandle}`
-    ).start();
     await page.goto(url, { waitUntil: "networkidle2", timeout: 0 });
-
     const videoInfo = await extractVideoInfo(page);
-
-    spinner.succeed(" Data Got Successfully.");
+    spinner.succeed("✅ Stream data retrived successfully.");
 
     if (videoInfo.videoId) {
       return {
@@ -31,6 +29,7 @@ const checkLiveStatus = async () => {
       };
     }
   } catch (error) {
+    spinner.fail("❌ Failed to check live status.");
     return {
       status: "ERROR",
       error: error.message,
