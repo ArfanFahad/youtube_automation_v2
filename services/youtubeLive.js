@@ -14,7 +14,7 @@ const checkLiveStatus = async () => {
   try {
     await page.goto(url, { waitUntil: "networkidle2", timeout: 0 });
     const videoInfo = await extractVideoInfo(page);
-    spinner.succeed("✅ Stream data retrived successfully.");
+    spinner.succeed(" Stream data retrived successfully.");
 
     if (videoInfo.videoId) {
       return {
@@ -29,7 +29,7 @@ const checkLiveStatus = async () => {
       };
     }
   } catch (error) {
-    spinner.fail("❌ Failed to check live status.");
+    spinner.fail(" Failed to check live status.");
     return {
       status: "ERROR",
       error: error.message,

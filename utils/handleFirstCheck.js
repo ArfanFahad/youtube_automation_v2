@@ -4,7 +4,7 @@ const handleFirstCheck = (status) => {
   }
   if (status === "OFF") {
     console.log("First check: Stream is not running.");
-    return null;
+    return "First check: Stream is not running. Start it ASAP!";
   }
 };
 

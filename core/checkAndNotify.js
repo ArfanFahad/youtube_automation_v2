@@ -1,23 +1,10 @@
 import { checkLiveStatus } from "../services/youtubeLive.js";
 import { getState, setStatus } from "../live_state/stateManager.js";
-import { createWhatsAppClient, sendMessageToGroup } from "../lib/whatsapp.js";
+import { sendWhatsAppUpdate } from "../lib/sendWhatsAppUpdate.js";
 import config from "../config/config.js";
 import { handleFirstCheck } from "../utils/handleFirstCheck.js";
 import { handleStatusTransition } from "../utils/handleStatusTransition.js";
 import { handleError } from "../utils/handleError.js";
-import ora from "ora";
-
-const sendWhatsAppUpdate = async (groupName, message, spinnerMessge) => {
-  const spinner = ora(spinnerMessge).start();
-  try {
-    await createWhatsAppClient();
-    await sendMessageToGroup(groupName, message);
-    spinner.succeed(" Message sent successfully.");
-  } catch (error) {
-    spinner.fail(" Failed to send message on WhatsApp.");
-    console.error("Error during WhatsApp message send: ", error.message);
-  }
-};
 
 const checkAndNotify = async () => {
   try {
@@ -37,20 +24,15 @@ const checkAndNotify = async () => {
     if (previous === null) {
       const message = handleFirstCheck(newStatus);
       if (message) {
-        await sendWhatsAppUpdate(
-          groupName,
-          message,
-          "First time check: creating WhatsApp instance...\n"
-        );
+        await sendWhatsAppUpdate(groupName, message);
       }
     } else {
       const message = handleStatusTransition(previous, newStatus);
+      console.log("Handle Status Transition Print:", message);
       if (message) {
-        await sendWhatsAppUpdate(
-          groupName,
-          message,
-          "Regular check: updating WhatsApp...\n"
-        );
+        console.log("Inside Condition, WhatsApp client is trying to start...");
+        await sendWhatsAppUpdate(groupName, message);
+        console.log("Condition rendered. Message sent to whatsapp");
       }
     }
 
